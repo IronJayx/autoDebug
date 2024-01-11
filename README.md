@@ -18,6 +18,24 @@
 
 ## Features
 
+- Editor
+  - If no content: paste/ upload
+  - Render Diff with messages and original content
+- Diff
+  - render monaco editor
+  - render button
+    - on button click
+    - if right content
+      - create a new message with the last right content
+    - elif left content
+      - create a new message with the last left content
+    - set right content value to null
+    - call api
+  - listen for new messages
+    - on new message
+      - if from assistant
+        - update right content
+
 - [Next.js](https://nextjs.org) App Router
 - React Server Components (RSCs), Suspense, and Server Actions
 - [Vercel AI SDK](https://sdk.vercel.ai/docs) for streaming chat UI

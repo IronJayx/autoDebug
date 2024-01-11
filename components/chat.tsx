@@ -26,9 +26,10 @@ const IS_PREVIEW = process.env.VERCEL_ENV === 'preview'
 export interface ChatProps extends React.ComponentProps<'div'> {
   initialMessages?: Message[]
   id?: string
+  onToggleView: () => void;
 }
 
-export function Chat({ id, initialMessages, className }: ChatProps) {
+export function Chat({ id, initialMessages, className, onToggleView }: ChatProps) {
   const router = useRouter()
   const path = usePathname()
   const [previewToken, setPreviewToken] = useLocalStorage<string | null>(
