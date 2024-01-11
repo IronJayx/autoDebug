@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { DiffEditor } from '@monaco-editor/react';
 import { ButtonPanel } from '@/components/ui/buttonPanel'
+import { useTheme } from 'next-themes'
 
 export interface Message {
     content: string;
@@ -24,6 +25,7 @@ export function DiffView({ original, messages, responseInProgress, edit, discard
     const [isReadingCode, setIsReadingCode] = useState(false);
     const [codeContent, setCodeContent] = useState('');
     const codeSnippetPattern = /```[a-zA-Z]+\n([\s\S]*?)(?:```|$)/;
+    const { theme } = useTheme();
 
     function handleEditorDidMount(editor, monaco) {
         diffEditorRef.current = editor;
@@ -140,6 +142,7 @@ export function DiffView({ original, messages, responseInProgress, edit, discard
                 original={original}
                 modified={rightContent || "// Enter some comments or pseudo-code on how to edit it."}
                 onMount={handleEditorDidMount}
+                theme={theme === 'dark' ? 'vs-dark' : 'vs'}
             />
             <ButtonPanel
                 isLoading={isLoading}
