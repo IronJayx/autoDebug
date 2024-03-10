@@ -7,7 +7,6 @@ import { DiffView } from '@/components/diffView'
 import { useLocalStorage } from '@/lib/hooks/use-local-storage'
 import { useState, useEffect } from 'react'
 import { toast } from 'react-hot-toast'
-import { sample_code } from '@/app/strings'
 
 const IS_PREVIEW = process.env.VERCEL_ENV === 'preview'
 
@@ -23,7 +22,7 @@ export function Editor({ id, initialMessages, onToggleView }: EditorProps) {
     const [initFlow, setInitFlow] = useState('none'); // New state to manage initialization flow
     const [debugContent, setDebugContent] = useState<string | null>(null);
 
-    const { messages, append, reload, stop, isLoading, input, setInput, setMessages } = useChat({
+    const { messages, append, reload, isLoading, setMessages } = useChat({
         initialMessages,
         id,
         body: {
@@ -40,11 +39,6 @@ export function Editor({ id, initialMessages, onToggleView }: EditorProps) {
     const handleInit = (input: string, initType: 'scratch' | 'baseInput') => {
         setOriginalInput(input);
         setInitFlow(initType);
-
-        // If we have base input, call the edit flow immediately
-        if (initType === 'baseInput') {
-            handleEdit(input);
-        }
 
         if (initType === 'scratch') {
             handleStartFromScratch();
@@ -76,18 +70,17 @@ export function Editor({ id, initialMessages, onToggleView }: EditorProps) {
         }
     };
 
-    const handleEdit = async (content: string) => {
+    const handleCallLLm = async (content: string) => {
         // Logic to handle debug content
         setDebugContent(content);
 
         // Send the content to the chat API
         try {
-            console.log('calling')
             await append({
                 id,
-                content, // the debug content
-                role: 'user' // assuming the role is 'user'
-            }).then(resp => console.log(messages));
+                content,
+                role: 'user'
+            });
         } catch (error) {
             console.error('Error sending debug content:', error);
             toast.error('Failed to send debug content');
@@ -100,10 +93,11 @@ export function Editor({ id, initialMessages, onToggleView }: EditorProps) {
                 <BaseInput handleInit={handleInit} />
             ) : (
                 <DiffView
+                    id={id}
                     original={originalInput}
                     messages={messages}
                     responseInProgress={isLoading}
-                    edit={handleEdit}
+                    callLLM={handleCallLLm}
                     retry={handleRetry}
                     discard={handleDiscard}
                 />
